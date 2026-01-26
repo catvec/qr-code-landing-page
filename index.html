@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <style>
+     body {
+         padding: 0;
+         margin: 0;
+
+         display: flex;
+         flex-direction: column;
+         align-items: center;
+         justify-content: center;
+
+         font-size: 10px;
+         font-family: sans-serif;
+     }
+
+     #container {
+         display: flex;
+         width: 100%;
+         max-width: 50rem;
+         flex-direction: column;
+         align-items: center;
+         justify-content: center;
+     }
+
+     #container hr {
+         width: 100%;
+     }
+
+     #title-target {
+         font-size: 3rem;
+     }
+
+     #text-target {
+         font-size: 2rem;
+         white-space: pre-wrap;
+     }
+    </style>
+    <body>
+        <div id="container">
+            <h1 id="title-target"></h1>
+            <hr>
+            <p id="text-target">
+            </p>
+        </div>
+
+        <script type="text/javascript">
+         // Constants
+         const TITLE_PARAM = "title"
+         const TEXT_PARAM = "text";
+
+         // Elements
+         const titleTargetEl = document.getElementById("title-target");
+         const textTargetEl = document.getElementById("text-target");
+
+         // Set content
+         const urlParams = new URLSearchParams(window.location.search);
+         const titleParam = urlParams.get(TITLE_PARAM);
+         const textParam = urlParams.get(TEXT_PARAM);
+
+         if (titleParam !== null) {
+             const title = decodeURI(titleParam);
+             document.title = title;
+             titleTargetEl.textContent = title;
+         }
+
+         if (textParam !== null) {
+             textTargetEl.textContent = decodeURI(textParam);
+         }
+        </script>
+    </body>
+</html>
