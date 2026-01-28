@@ -1,11 +1,11 @@
 from django.contrib import admin
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
 from django.urls import path, reverse
 from django.utils.html import format_html
 from django_object_actions import DjangoObjectActions
 from unfold.admin import ModelAdmin
 
+from .admin_helpers import admin_render
 from .admin_mixins import unfold_action
 from .models import LandingPage
 from .qr import generate_qr_png, generate_qr_svg
@@ -35,7 +35,7 @@ class LandingPageAdmin(DjangoObjectActions, ModelAdmin):
         }),
     ]
 
-    change_actions = ['view_page', 'view_qr_code', 'download_qr_code']
+    change_actions = ['view_qr_code', 'download_qr_code']
 
     def get_urls(self):
         urls = super().get_urls()
@@ -63,7 +63,7 @@ class LandingPageAdmin(DjangoObjectActions, ModelAdmin):
             version=obj.qr_version,
             scale=4,
         )
-        return format_html('<div style="max-width: 200px; background: white;">{}</div>', format_html(svg))
+        return format_html('<div style="display: inline-block; background: white;">{}</div>', format_html(svg))
     qr_preview.short_description = 'Preview'
 
     def qr_view(self, request, pk):
@@ -75,7 +75,7 @@ class LandingPageAdmin(DjangoObjectActions, ModelAdmin):
             version=obj.qr_version,
             scale=6,
         )
-        return render(request, 'pages/qr_view.html', {
+        return admin_render(request, 'admin/pages/qr_view.html', {
             'page': obj,
             'qr_svg': svg,
             'full_url': full_url,
@@ -94,10 +94,6 @@ class LandingPageAdmin(DjangoObjectActions, ModelAdmin):
         response = HttpResponse(png, content_type='image/png')
         response['Content-Disposition'] = f'attachment; filename="{obj.public_id}.png"'
         return response
-
-    @unfold_action(label="View Page", short_description="Open landing page")
-    def view_page(self, request, obj):
-        return HttpResponseRedirect(obj.get_absolute_url())
 
     @unfold_action(label="View QR Code", short_description="View QR code")
     def view_qr_code(self, request, obj):
