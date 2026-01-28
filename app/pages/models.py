@@ -22,7 +22,7 @@ class LandingPage(models.Model):
     )
 
     # Content fields
-    title = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, help_text='Internal name for organization')
     body = models.TextField(blank=True)
     is_active = models.BooleanField(default=True)
 
@@ -45,11 +45,6 @@ class LandingPage(models.Model):
         verbose_name='Scale',
         help_text='Module size in pixels for PNG export',
     )
-    qr_border = models.PositiveSmallIntegerField(
-        default=4,
-        verbose_name='Border',
-        help_text='Quiet zone modules (spec requires 4)',
-    )
 
     # Metadata
     created_at = models.DateTimeField(auto_now_add=True)
@@ -59,7 +54,7 @@ class LandingPage(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return self.title
+        return self.name
 
     def get_absolute_url(self):
         return reverse('pages:landing_page', kwargs={'public_id': self.public_id})

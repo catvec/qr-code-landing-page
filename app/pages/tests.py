@@ -14,7 +14,7 @@ class LandingPageViewTests(TestCase):
     def test_landing_page_returns_200_for_active_page(self):
         """Active landing pages should return 200."""
         page = LandingPage.objects.create(
-            title="Test Page",
+            name="Test Page",
             body="Hello world",
             is_active=True,
         )
@@ -24,7 +24,7 @@ class LandingPageViewTests(TestCase):
     def test_landing_page_returns_404_for_inactive_page(self):
         """Inactive landing pages should return 404."""
         page = LandingPage.objects.create(
-            title="Inactive Page",
+            name="Inactive Page",
             body="Should not be visible",
             is_active=False,
         )
@@ -40,7 +40,7 @@ class LandingPageViewTests(TestCase):
     def test_landing_page_renders_markdown_correctly(self):
         """Markdown content should be rendered to HTML."""
         page = LandingPage.objects.create(
-            title="Markdown Test",
+            name="Markdown Test",
             body="# Hello\n\n**bold** text",
             is_active=True,
         )
@@ -49,10 +49,10 @@ class LandingPageViewTests(TestCase):
         self.assertContains(response, "<h1>Hello</h1>")
         self.assertContains(response, "<strong>bold</strong>")
 
-    def test_landing_page_displays_title(self):
-        """Page title should appear in the response."""
+    def test_landing_page_has_name_in_title(self):
+        """Page name should appear in the page title."""
         page = LandingPage.objects.create(
-            title="My Contact Info",
+            name="My Contact Info",
             body="Content here",
             is_active=True,
         )
@@ -63,7 +63,7 @@ class LandingPageViewTests(TestCase):
     def test_landing_page_handles_empty_body(self):
         """Empty body should not crash the page."""
         page = LandingPage.objects.create(
-            title="Empty Page",
+            name="Empty Page",
             body="",
             is_active=True,
         )
@@ -73,7 +73,7 @@ class LandingPageViewTests(TestCase):
     def test_landing_page_handles_special_characters(self):
         """Unicode, emoji, and special characters should work."""
         page = LandingPage.objects.create(
-            title="Special Characters",
+            name="Special Characters",
             body="Hello! Привет! こんにちは! 🧳✈️ <script>alert('xss')</script>",
             is_active=True,
         )
@@ -85,7 +85,7 @@ class LandingPageViewTests(TestCase):
     def test_landing_page_no_auth_required(self):
         """Landing pages should work without authentication."""
         page = LandingPage.objects.create(
-            title="Public Page",
+            name="Public Page",
             body="Anyone can see this",
             is_active=True,
         )
@@ -100,26 +100,25 @@ class LandingPageModelTests(TestCase):
 
     def test_public_id_is_auto_generated(self):
         """public_id should be automatically generated."""
-        page = LandingPage.objects.create(title="Test", body="Content")
+        page = LandingPage.objects.create(name="Test", body="Content")
         self.assertIsNotNone(page.public_id)
         self.assertIsInstance(page.public_id, uuid.UUID)
 
     def test_public_id_is_unique(self):
         """Each page should have a unique public_id."""
-        page1 = LandingPage.objects.create(title="Page 1", body="Content")
-        page2 = LandingPage.objects.create(title="Page 2", body="Content")
+        page1 = LandingPage.objects.create(name="Page 1", body="Content")
+        page2 = LandingPage.objects.create(name="Page 2", body="Content")
         self.assertNotEqual(page1.public_id, page2.public_id)
 
     def test_default_qr_settings(self):
         """Default QR settings should be set correctly."""
-        page = LandingPage.objects.create(title="Test", body="Content")
+        page = LandingPage.objects.create(name="Test", body="Content")
         self.assertEqual(page.qr_error_correction, "H")
         self.assertIsNone(page.qr_version)
         self.assertEqual(page.qr_scale, 10)
-        self.assertEqual(page.qr_border, 4)
 
     def test_get_absolute_url(self):
         """get_absolute_url should return the correct path."""
-        page = LandingPage.objects.create(title="Test", body="Content")
+        page = LandingPage.objects.create(name="Test", body="Content")
         url = page.get_absolute_url()
         self.assertEqual(url, f"/p/{page.public_id}/")

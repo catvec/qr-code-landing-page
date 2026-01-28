@@ -13,17 +13,17 @@ from .qr import generate_qr_png, generate_qr_svg
 
 @admin.register(LandingPage)
 class LandingPageAdmin(DjangoObjectActions, ModelAdmin):
-    list_display = ['title', 'is_active', 'created_at']
+    list_display = ['name', 'is_active', 'created_at']
     list_filter = ['is_active', 'created_at']
-    search_fields = ['title', 'body']
+    search_fields = ['name', 'body']
     readonly_fields = ['public_id', 'created_at', 'updated_at', 'qr_preview']
 
     fieldsets = [
         (None, {
-            'fields': ['title', 'body', 'is_active']
+            'fields': ['name', 'body', 'is_active']
         }),
         ('QR Code Settings', {
-            'fields': ['qr_error_correction', 'qr_version', 'qr_scale', 'qr_border'],
+            'fields': ['qr_error_correction', 'qr_version', 'qr_scale'],
             'classes': ['collapse'],
         }),
         ('QR Code Preview', {
@@ -62,9 +62,8 @@ class LandingPageAdmin(DjangoObjectActions, ModelAdmin):
             error=obj.qr_error_correction,
             version=obj.qr_version,
             scale=4,
-            border=obj.qr_border,
         )
-        return format_html('<div style="max-width: 200px;">{}</div>', format_html(svg))
+        return format_html('<div style="max-width: 200px; background: white;">{}</div>', format_html(svg))
     qr_preview.short_description = 'Preview'
 
     def qr_view(self, request, pk):
@@ -75,7 +74,6 @@ class LandingPageAdmin(DjangoObjectActions, ModelAdmin):
             error=obj.qr_error_correction,
             version=obj.qr_version,
             scale=6,
-            border=obj.qr_border,
         )
         return render(request, 'pages/qr_view.html', {
             'page': obj,
@@ -92,7 +90,6 @@ class LandingPageAdmin(DjangoObjectActions, ModelAdmin):
             error=obj.qr_error_correction,
             version=obj.qr_version,
             scale=obj.qr_scale,
-            border=obj.qr_border,
         )
         response = HttpResponse(png, content_type='image/png')
         response['Content-Disposition'] = f'attachment; filename="{obj.public_id}.png"'
