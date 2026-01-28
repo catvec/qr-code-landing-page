@@ -2,3 +2,8 @@
 watchdog[watchmedo]>=6.0
 pytest>=8.0
 pytest-django>=4.8
+
+# Static analysis
+ruff>=0.9
+mypy>=1.14
+django-stubs>=5.1
