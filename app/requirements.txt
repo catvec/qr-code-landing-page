@@ -1,0 +1,9 @@
+Django>=5.1,<6.0
+django-unfold>=0.40
+django-object-actions>=4.3
+segno>=1.6
+markdown>=3.7
+pillow>=11.0
+gunicorn>=23.0
+psycopg[binary]>=3.2
+dj-database-url>=2.3

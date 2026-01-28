@@ -1,0 +1,33 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      PGDATA: /var/lib/postgresql/17/docker
+      POSTGRES_DB: qrlanding
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/17/docker
+    ports:
+      - "5432:5432"
+    restart: always
+
+  web:
+    build:
+      context: ./app
+      dockerfile: dev.Dockerfile
+    command: watchmedo auto-restart --directory=./ --pattern=*.py --recursive --no-restart-on-command-exit -- python manage.py runserver --noreload 0.0.0.0:${PORT:-8000}
+    volumes:
+      - ./app:/app
+    ports:
+      - "${PORT:-8000}:${PORT:-8000}"
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/qrlanding
+    depends_on:
+      - postgres
+    restart: always
+
+volumes:
+  postgres_data: {}
