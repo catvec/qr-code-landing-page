@@ -5,7 +5,6 @@ from django.utils.html import format_html
 from django_object_actions import DjangoObjectActions
 from unfold.admin import ModelAdmin
 
-from .admin_helpers import admin_render
 from .admin_mixins import unfold_action
 from .models import LandingPage
 from .qr import generate_qr_png, generate_qr_svg
@@ -35,16 +34,11 @@ class LandingPageAdmin(DjangoObjectActions, ModelAdmin):
         }),
     ]
 
-    change_actions = ['view_qr_code', 'download_qr_code']
+    change_actions = ['download_qr_code']
 
     def get_urls(self):
         urls = super().get_urls()
         custom_urls = [
-            path(
-                '<int:pk>/qr/',
-                self.admin_site.admin_view(self.qr_view),
-                name='pages_landingpage_qr',
-            ),
             path(
                 '<int:pk>/qr/download/',
                 self.admin_site.admin_view(self.qr_download),
@@ -61,26 +55,10 @@ class LandingPageAdmin(DjangoObjectActions, ModelAdmin):
             preview_url,
             error=obj.qr_error_correction,
             version=obj.qr_version,
-            scale=4,
+            scale=obj.qr_scale,
         )
         return format_html('<div style="display: inline-block; background: white;">{}</div>', format_html(svg))
     qr_preview.short_description = 'Preview'
-
-    def qr_view(self, request, pk):
-        obj = self.get_object(request, pk)
-        full_url = request.build_absolute_uri(obj.get_absolute_url())
-        svg = generate_qr_svg(
-            full_url,
-            error=obj.qr_error_correction,
-            version=obj.qr_version,
-            scale=6,
-        )
-        return admin_render(request, 'admin/pages/qr_view.html', {
-            'page': obj,
-            'qr_svg': svg,
-            'full_url': full_url,
-            'download_url': reverse('admin:pages_landingpage_qr_download', args=[obj.pk]),
-        })
 
     def qr_download(self, request, pk):
         obj = self.get_object(request, pk)
@@ -94,11 +72,6 @@ class LandingPageAdmin(DjangoObjectActions, ModelAdmin):
         response = HttpResponse(png, content_type='image/png')
         response['Content-Disposition'] = f'attachment; filename="{obj.public_id}.png"'
         return response
-
-    @unfold_action(label="View QR Code", short_description="View QR code")
-    def view_qr_code(self, request, obj):
-        url = reverse('admin:pages_landingpage_qr', args=[obj.pk])
-        return HttpResponseRedirect(url)
 
     @unfold_action(label="Download QR Code", short_description="Download QR as PNG")
     def download_qr_code(self, request, obj):
