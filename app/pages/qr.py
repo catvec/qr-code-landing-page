@@ -7,9 +7,9 @@ def generate_qr_svg(url: str, error: str = 'H', version: int | None = None,
                     scale: int = 4, border: int = 4) -> str:
     """Generate QR code as SVG string."""
     qr = segno.make(url, error=error, version=version)
-    buffer = io.StringIO()
+    buffer = io.BytesIO()
     qr.save(buffer, kind='svg', scale=scale, border=border)
-    return buffer.getvalue()
+    return buffer.getvalue().decode('utf-8')
 
 
 def generate_qr_png(url: str, error: str = 'H', version: int | None = None,
