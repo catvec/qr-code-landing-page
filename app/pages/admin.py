@@ -1,6 +1,7 @@
 from allauth.account.models import EmailAddress
 from allauth.socialaccount.models import SocialAccount, SocialApp, SocialToken
 from django.contrib import admin
+from django.contrib.sites.models import Site
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import path, reverse
 from django.utils.html import format_html
@@ -90,7 +91,8 @@ class LandingPageAdmin(DjangoObjectActions, ModelAdmin):
         return HttpResponseRedirect(url)
 
 
-# Unregister unused allauth admin views (OAuth is configured via settings, not admin)
+# Unregister unused admin views (OAuth and Site are configured via settings/env vars)
+admin.site.unregister(Site)
 admin.site.unregister(EmailAddress)
 admin.site.unregister(SocialApp)
 admin.site.unregister(SocialToken)
