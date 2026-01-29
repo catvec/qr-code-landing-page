@@ -11,13 +11,17 @@ def landing_page(request, public_id):
     html_content = markdown.markdown(
         page.body,
         extensions=[
-            'markdown.extensions.fenced_code',
-            'markdown.extensions.tables',
-            'markdown.extensions.nl2br',
-        ]
+            "markdown.extensions.fenced_code",
+            "markdown.extensions.tables",
+            "markdown.extensions.nl2br",
+        ],
     )
 
-    return render(request, 'pages/landing_page.html', {
-        'page': page,
-        'content': html_content,
-    })
+    return render(
+        request,
+        "pages/landing_page.html",
+        {
+            "page": page,
+            "content": html_content,
+        },
+    )

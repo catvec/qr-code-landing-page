@@ -12,37 +12,44 @@ from .qr import generate_qr_png, generate_qr_svg
 
 @admin.register(LandingPage)
 class LandingPageAdmin(DjangoObjectActions, ModelAdmin):
-    list_display = ['name', 'is_active', 'created_at']
-    list_filter = ['is_active', 'created_at']
-    search_fields = ['name', 'body']
-    readonly_fields = ['public_id', 'created_at', 'updated_at', 'qr_preview']
+    list_display = ["name", "is_active", "created_at"]
+    list_filter = ["is_active", "created_at"]
+    search_fields = ["name", "body"]
+    readonly_fields = ["public_id", "created_at", "updated_at", "qr_preview"]
 
     fieldsets = [
-        (None, {
-            'fields': ['name', 'body', 'is_active']
-        }),
-        ('QR Code Settings', {
-            'fields': ['qr_error_correction', 'qr_version', 'qr_scale'],
-            'classes': ['collapse'],
-        }),
-        ('QR Code Preview', {
-            'fields': ['qr_preview'],
-        }),
-        ('Metadata', {
-            'fields': ['public_id', 'created_at', 'updated_at'],
-            'classes': ['collapse'],
-        }),
+        (None, {"fields": ["name", "body", "is_active"]}),
+        (
+            "QR Code Settings",
+            {
+                "fields": ["qr_error_correction", "qr_version", "qr_scale"],
+                "classes": ["collapse"],
+            },
+        ),
+        (
+            "QR Code Preview",
+            {
+                "fields": ["qr_preview"],
+            },
+        ),
+        (
+            "Metadata",
+            {
+                "fields": ["public_id", "created_at", "updated_at"],
+                "classes": ["collapse"],
+            },
+        ),
     ]
 
-    change_actions = ['download_qr_code']
+    change_actions = ["download_qr_code"]
 
     def get_urls(self):
         urls = super().get_urls()
         custom_urls = [
             path(
-                '<int:pk>/qr/download/',
+                "<int:pk>/qr/download/",
                 self.admin_site.admin_view(self.qr_download),
-                name='pages_landingpage_qr_download',
+                name="pages_landingpage_qr_download",
             ),
         ]
         return custom_urls + urls
@@ -57,8 +64,11 @@ class LandingPageAdmin(DjangoObjectActions, ModelAdmin):
             version=obj.qr_version,
             scale=obj.qr_scale,
         )
-        return format_html('<div style="display: inline-block; background: white;">{}</div>', format_html(svg))
-    qr_preview.short_description = 'Preview'
+        return format_html(
+            '<div style="display: inline-block; background: white;">{}</div>', format_html(svg)
+        )
+
+    qr_preview.short_description = "Preview"
 
     def qr_download(self, request, pk):
         obj = self.get_object(request, pk)
@@ -69,11 +79,11 @@ class LandingPageAdmin(DjangoObjectActions, ModelAdmin):
             version=obj.qr_version,
             scale=obj.qr_scale,
         )
-        response = HttpResponse(png, content_type='image/png')
-        response['Content-Disposition'] = f'attachment; filename="{obj.public_id}.png"'
+        response = HttpResponse(png, content_type="image/png")
+        response["Content-Disposition"] = f'attachment; filename="{obj.public_id}.png"'
         return response
 
     @unfold_action(label="Download QR Code", short_description="Download QR as PNG")
     def download_qr_code(self, request, obj):
-        url = reverse('admin:pages_landingpage_qr_download', args=[obj.pk])
+        url = reverse("admin:pages_landingpage_qr_download", args=[obj.pk])
         return HttpResponseRedirect(url)

@@ -5,29 +5,69 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='LandingPage',
+            name="LandingPage",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('public_id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, unique=True)),
-                ('name', models.CharField(help_text='Internal name for organization', max_length=200)),
-                ('body', models.TextField(blank=True)),
-                ('is_active', models.BooleanField(default=True)),
-                ('qr_error_correction', models.CharField(choices=[('L', 'Low (7%)'), ('M', 'Medium (15%)'), ('Q', 'Quartile (25%)'), ('H', 'High (30%)')], default='H', help_text='Higher = more damage resistance but more modules', max_length=1, verbose_name='Error correction')),
-                ('qr_version', models.PositiveSmallIntegerField(blank=True, help_text='1-40. Leave blank for auto (minimum size)', null=True, verbose_name='Version')),
-                ('qr_scale', models.PositiveSmallIntegerField(default=10, help_text='Module size in pixels for PNG export', verbose_name='Scale')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                (
+                    "public_id",
+                    models.UUIDField(
+                        db_index=True, default=uuid.uuid4, editable=False, unique=True
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(help_text="Internal name for organization", max_length=200),
+                ),
+                ("body", models.TextField(blank=True)),
+                ("is_active", models.BooleanField(default=True)),
+                (
+                    "qr_error_correction",
+                    models.CharField(
+                        choices=[
+                            ("L", "Low (7%)"),
+                            ("M", "Medium (15%)"),
+                            ("Q", "Quartile (25%)"),
+                            ("H", "High (30%)"),
+                        ],
+                        default="H",
+                        help_text="Higher = more damage resistance but more modules",
+                        max_length=1,
+                        verbose_name="Error correction",
+                    ),
+                ),
+                (
+                    "qr_version",
+                    models.PositiveSmallIntegerField(
+                        blank=True,
+                        help_text="1-40. Leave blank for auto (minimum size)",
+                        null=True,
+                        verbose_name="Version",
+                    ),
+                ),
+                (
+                    "qr_scale",
+                    models.PositiveSmallIntegerField(
+                        default=10,
+                        help_text="Module size in pixels for PNG export",
+                        verbose_name="Scale",
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
             ],
             options={
-                'ordering': ['-created_at'],
+                "ordering": ["-created_at"],
             },
         ),
     ]

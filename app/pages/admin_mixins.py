@@ -16,8 +16,7 @@ def unfold_action(label=None, short_description=None):
     def decorator(func):
         # Unfold theme classes for action buttons
         unfold_link_classes = (
-            "cursor-pointer flex grow items-center gap-2 px-3 py-2 "
-            "text-left whitespace-nowrap"
+            "cursor-pointer flex grow items-center gap-2 px-3 py-2 text-left whitespace-nowrap"
         )
 
         func.attrs = {"class": unfold_link_classes}
