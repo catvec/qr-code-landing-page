@@ -7,3 +7,5 @@ pytest-django>=4.8
 ruff>=0.9
 mypy>=1.14
 django-stubs>=5.1
+types-Markdown>=3.7
+types-bleach>=6.0
