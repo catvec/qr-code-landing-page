@@ -1,3 +1,5 @@
+from allauth.account.models import EmailAddress
+from allauth.socialaccount.models import SocialAccount, SocialApp, SocialToken
 from django.contrib import admin
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import path, reverse
@@ -86,3 +88,10 @@ class LandingPageAdmin(DjangoObjectActions, ModelAdmin):
     def download_qr_code(self, request, obj):
         url = reverse("admin:pages_landingpage_qr_download", args=[obj.pk])
         return HttpResponseRedirect(url)
+
+
+# Unregister unused allauth admin views (OAuth is configured via settings, not admin)
+admin.site.unregister(EmailAddress)
+admin.site.unregister(SocialApp)
+admin.site.unregister(SocialToken)
+admin.site.unregister(SocialAccount)

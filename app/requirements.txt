@@ -1,4 +1,5 @@
 Django>=5.1,<6.0
+django-allauth[socialaccount]>=65.0
 django-unfold>=0.40
 django-object-actions>=4.3
 segno>=1.6
