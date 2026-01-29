@@ -1,11 +1,22 @@
-import logging
+"""
+Update the Django Site object to match the SITE_URL environment variable.
+
+Required for django-allauth OAuth to generate correct callback URLs.
+
+Usage:
+    ./manage.py update_site_domain
+
+Run after:
+    - Initial migrations (creates Site table)
+    - Changing SITE_URL environment variable
+    - Deployment to sync Site with production URL
+"""
+
 from urllib.parse import urlparse
 
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.management.base import BaseCommand
-
-logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
@@ -38,21 +49,13 @@ class Command(BaseCommand):
             site.name = domain
             site.save()
 
-            logger.info(
-                "Successfully updated Site object (ID=%(site_id)s): domain changed from "
-                "'%(old_domain)s' to '%(domain)s', name changed from '%(old_name)s' to '%(domain)s'",
-                {
-                    "site_id": site_id,
-                    "old_domain": old_domain,
-                    "old_name": old_name,
-                    "domain": domain,
-                },
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"Successfully updated Site object (ID={site_id}): domain changed from "
+                    f"'{old_domain}' to '{domain}', name changed from '{old_name}' to '{domain}'"
+                )
             )
         else:
-            logger.info(
-                "Site object (ID=%(site_id)s) already has the correct domain and name: '%(domain)s'",
-                {
-                    "site_id": site_id,
-                    "domain": domain,
-                },
+            self.stdout.write(
+                f"Site object (ID={site_id}) already has the correct domain and name: '{domain}'"
             )
