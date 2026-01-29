@@ -54,6 +54,7 @@ class LandingPageAdmin(DjangoObjectActions, ModelAdmin):
         ]
         return custom_urls + urls
 
+    @admin.display(description="Preview")
     def qr_preview(self, obj):
         if not obj.pk:
             return "Save the page first to see QR code preview"
@@ -67,8 +68,6 @@ class LandingPageAdmin(DjangoObjectActions, ModelAdmin):
         return format_html(
             '<div style="display: inline-block; background: white;">{}</div>', format_html(svg)
         )
-
-    qr_preview.short_description = "Preview"
 
     def qr_download(self, request, pk):
         obj = self.get_object(request, pk)
