@@ -1,0 +1,31 @@
+image: alpine/edge
+
+packages:
+  - buildah
+
+sources:
+  - https://github.com/catvec/qr-code-landing-page.git
+
+secrets:
+  # Create at https://builds.sr.ht/secrets as a "file" secret:
+  #   Path: ~/.docker-token
+  #   Content: your Docker Hub access token
+  # Replace UUID below with your secret's UUID
+  - 90495ecd-8fec-4572-b12f-a74bbb83a2ee
+
+environment:
+  DOCKER_USERNAME: isolation0230
+  IMAGE_NAME: isolation0230/qr-code-landing-page
+
+tasks:
+  - build: |
+      cd qr-code-landing-page/app
+      TAG=$(git rev-parse --short HEAD)
+      buildah bud -t docker.io/$IMAGE_NAME:latest -t docker.io/$IMAGE_NAME:$TAG .
+
+  - push: |
+      cd qr-code-landing-page
+      TAG=$(git rev-parse --short HEAD)
+      buildah login -u $DOCKER_USERNAME --password-stdin docker.io < ~/.docker-token
+      buildah push docker.io/$IMAGE_NAME:latest
+      buildah push docker.io/$IMAGE_NAME:$TAG
