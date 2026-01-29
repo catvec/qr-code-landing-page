@@ -6,6 +6,7 @@ ARG GID=1000
 WORKDIR /app
 
 RUN apk add --no-cache \
+    bash \
     gcc g++ \
     musl-dev \
     postgresql-dev \
