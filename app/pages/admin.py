@@ -1,12 +1,16 @@
 from allauth.account.models import EmailAddress
 from allauth.socialaccount.models import SocialAccount, SocialApp, SocialToken
 from django.contrib import admin
+from django.contrib.auth.admin import GroupAdmin as BaseGroupAdmin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth.models import Group, User
 from django.contrib.sites.models import Site
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import path, reverse
 from django.utils.html import format_html
 from django_object_actions import DjangoObjectActions
 from unfold.admin import ModelAdmin
+from unfold.forms import AdminPasswordChangeForm, UserChangeForm, UserCreationForm
 
 from .admin_mixins import unfold_action
 from .models import LandingPage
@@ -91,9 +95,29 @@ class LandingPageAdmin(DjangoObjectActions, ModelAdmin):
         return HttpResponseRedirect(url)
 
 
+# Unregister default admin classes to re-register with Unfold styling
+admin.site.unregister(User)
+admin.site.unregister(Group)
+
 # Unregister unused admin views (OAuth and Site are configured via settings/env vars)
 admin.site.unregister(Site)
 admin.site.unregister(EmailAddress)
 admin.site.unregister(SocialApp)
 admin.site.unregister(SocialToken)
 admin.site.unregister(SocialAccount)
+
+
+@admin.register(User)
+class UserAdmin(BaseUserAdmin, ModelAdmin):
+    """User admin with Unfold styling."""
+
+    form = UserChangeForm
+    add_form = UserCreationForm
+    change_password_form = AdminPasswordChangeForm
+
+
+@admin.register(Group)
+class GroupAdmin(BaseGroupAdmin, ModelAdmin):
+    """Group admin with Unfold styling."""
+
+    pass
